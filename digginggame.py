@@ -3,6 +3,8 @@ import random
 from threading import Thread
 import time
 import pygame
+import math
+
 
 #Generates the map
 mining = []
@@ -265,7 +267,11 @@ ironore = pygame.image.load('blocks/ironore.png')
 energyore = pygame.image.load('blocks/energyore.png')
 emeraldore = pygame.image.load('blocks/emeraldore.png')
 copperore = pygame.image.load('blocks/copperore.png')
-lava = pygame.image.load('blocks/lava1.png')
+
+
+lavas = [pygame.image.load('blocks/lava1.png'), pygame.image.load('blocks/lava2.png'), pygame.image.load('blocks/lava3.png')]
+lava = lavas[0]
+
 ladder = pygame.image.load('blocks/ladder.png')
 planks = pygame.image.load('blocks/planks.png')
 stonebricks = pygame.image.load('blocks/stonebricks.png')
@@ -316,19 +322,22 @@ greendye = pygame.image.load('items/greendye.png')
 eraser = pygame.image.load('items/eraser.png')
 wrench = pygame.image.load('items/wrench.png')
 
+
+
+
 paintingmonster = pygame.image.load('painting/painting.png')
 
 #When adding new blocks / items add them to items1 list and items2 list
-items1 = [stonetile, obsidiantile, goldore, diamondore, ironore, energyore, 
-          emeraldore, copperore, lava, stonebricks, ladder, planks, paintingmonster, 
+items1 = [lava, stonetile, obsidiantile, goldore, diamondore, ironore, energyore, 
+          emeraldore, copperore, stonebricks, ladder, planks, paintingmonster, 
           chest, hopper_right, hopper_left, hopper_up, hopper_down, lever_up, lever_down, 
           airtile, redstone, redstone_on, piston_up, piston_up_extended, pistonhead_up, 
           piston_down, piston_down_extended, pistonhead_down, piston_right, piston_right_extended, 
           pistonhead_right, piston_left, piston_left_extended, pistonhead_left, reddye, greendye, 
           bluedye, eraser, redstonebricks, wrench]
 
-items2 = ["Stone_Block", "Obsidian", "Gold_Ore", "Diamond_Ore", "Iron_Ore", 
-          "Energy_Crystal", "Emerald_Ore", "Copper_Ore", "Lava", "Stone_Bricks", 
+items2 = ["Lava", "Stone_Block", "Obsidian", "Gold_Ore", "Diamond_Ore", "Iron_Ore", 
+          "Energy_Crystal", "Emerald_Ore", "Copper_Ore", "Stone_Bricks", 
           "Ladder", "Planks", "Painting_(Monster)", "Chest", "Hopper_Right", 
           "Hopper_Left", "Hopper_Up", "Hopper_Down", "Lever", "Lever_Down", 
           "Air", "Redstone", "Redstone_On", "Piston_Up", "Piston_Up_Extended", 
@@ -344,7 +353,7 @@ blocksthatcanbreak = ["Stone_Block", "Gold_Ore", "Diamond_Ore", "Iron_Ore",
                       "Piston_Up", "Piston_Down", "Piston_Right", "Piston_Left", 
                       "Red_Bricks"]
 
-buildingblocks = ["Stone_Block", "Obsidian", "Gold_Ore", "Diamond_Ore", 
+buildingblocks = ["Lava", "Stone_Block", "Obsidian", "Gold_Ore", "Diamond_Ore", 
                   "Iron_Ore", "Energy_Crystal", "Emerald_Ore", "Copper_Ore", 
                   "Stone_Bricks", "Ladder", "Planks", "Painting_(Monster)", 
                   "Chest", "Hopper_Right", "Hopper_Left", "Hopper_Up", 
@@ -352,7 +361,7 @@ buildingblocks = ["Stone_Block", "Obsidian", "Gold_Ore", "Diamond_Ore",
                   "Piston_Up", "Piston_Down", "Piston_Right", "Piston_Left", 
                   "Red_Bricks"]
 
-transparantblocks = ["Air", "Ladder", "Painting_(Monster)", "Lever", "Lever_Down", 
+transparantblocks = ["Lava", "Air", "Ladder", "Painting_(Monster)", "Lever", "Lever_Down", 
                      "Redstone", "Redstone_On"]
 
 lightblocks = ["Lava", "Air", "Ladder", "Painting_(Monster)", "Chest", "Hopper_Right", 
@@ -362,6 +371,9 @@ lightblocks = ["Lava", "Air", "Ladder", "Painting_(Monster)", "Chest", "Hopper_R
 
 transparantgravityblocks = ["Air", "Painting_(Monster)", "Lever", "Lever_Down", 
                             "Redstone", "Redstone_On"]
+reducedGravityBlocks = ["Lava"]
+
+climbingBlocks = ["Lava", "Ladder"]
 
 factoryblocks = ["Chest", "Hopper_Right", "Hopper_Left", "Hopper", "Hopper_Down", 
                  "Lever", "Lever_Down", "Piston_Up", "Redstone", "Redstone_On", 
@@ -424,7 +436,7 @@ def startup():
     mining[middletilenr - 4 * 1000 + 4 - 1002] = "Planks"
     mining[middletilenr - 4 * 1000 + 4] = "Air"
     mining[middletilenr - 4 * 1000 + 4 + 1] = "Air"
-    mining[middletilenr - 4 * 1000 + 4 - 1] = "Chest,Planks 99,Red_Bricks 100,Stone_Bricks 68,Chest 56,Ladder 45, , ,Hopper_Up 99, ,Lever 15,Redstone 99,Piston_Up 99, , ,Blue_Dye 10,Green_Dye 10,Wrench 1,Eraser 1" 
+    mining[middletilenr - 4 * 1000 + 4 - 1] = "Chest,Planks 99,Red_Bricks 100,Stone_Bricks 68,Chest 56,Ladder 45, , ,Hopper_Up 99, ,Lever 15,Redstone 99,Piston_Up 99, ,Blue_Dye 10,Green_Dye 10,Wrench 1,Eraser 1,Lava 12" 
     mining[middletilenr - 4 * 1000 + 4 + 1001] = "Air"
     mining[middletilenr - 4 * 1000 + 4 + 1000] = "Air"
     mining[middletilenr - 4 * 1000 + 4 + 999] = "Air"
@@ -437,7 +449,7 @@ def jump():
     global mining
     global jumpwait   
     global climbing
-    if (mining[(round((realx-16)/100) + (round((tiley)/1000))*1000) + 5 - 3000]) == "Ladder" or (mining[(round((realx - 50)/100) + (round((tiley)/1000))*1000) + 5 - 3000]) == "Ladder" or (mining[(round((realx-72)/100) + (round((tiley)/1000))*1000) + 5 - 3000]) == "Ladder":
+    if (mining[(round((realx-16)/100) + (round((tiley)/1000))*1000) + 5 - 3000]) in climbingBlocks or (mining[(round((realx - 50)/100) + (round((tiley)/1000))*1000) + 5 - 3000]) in climbingBlocks or (mining[(round((realx-72)/100) + (round((tiley)/1000))*1000) + 5 - 3000]) in climbingBlocks:
         climbing = True
     elif (mining[(round((realx-16)/100) + (round((tiley - 4)/1000))*1000) + 5 - 3000]) not in transparantblocks or (mining[(round((realx - 50)/100) + (round((tiley - 4)/1000))*1000) + 5 - 3000]) not in transparantblocks or (mining[(round((realx-72)/100) + (round((tiley - 4)/1000))*1000) + 5 - 3000]) not in transparantblocks:
         climbing = False
@@ -844,7 +856,7 @@ while QUIT:
             
             
     if climbing == True:
-        if (mining[(round((realx-16)/100) + (round((tiley)/1000))*1000) + 5 - 3000]) == "Ladder" or (mining[(round((realx - 50)/100) + (round((tiley)/1000))*1000) + 5 - 3000]) == "Ladder" or (mining[(round((realx-72)/100) + (round((tiley)/1000))*1000) + 5 - 3000]) == "Ladder":
+        if (mining[(round((realx-16)/100) + (round((tiley)/1000))*1000) + 5 - 3000]) in climbingBlocks or (mining[(round((realx - 50)/100) + (round((tiley)/1000))*1000) + 5 - 3000]) in climbingBlocks or (mining[(round((realx-72)/100) + (round((tiley)/1000))*1000) + 5 - 3000]) in climbingBlocks:
             if (mining[(round((realx - 50)/100) + (round((tiley + 1550)/1000))*1000) + 5 - 3000]) in transparantblocks and (mining[(round((realx - 72)/100) + (round((tiley + 1550)/1000))*1000) + 5 - 3000]) in transparantblocks and (mining[(round((realx - 16)/100) + (round((tiley + 1550)/1000))*1000) + 5 - 3000]) in transparantblocks:
                 realy -= 5
                 tiley += 50
@@ -861,6 +873,10 @@ while QUIT:
     blockx = round(realx/100)*100+(450-realx)
     blocky = round(realy/100)*100+(450-realy)
     ynumber = 6
+
+    lavastage = (lavastage + 0.01)%3
+    items1[0] = lavas[math.floor(lavastage)]
+
     for i in range(10):
         if startupp == "Ja":
             startup()
@@ -902,14 +918,7 @@ while QUIT:
             xnumber += -1
         ynumber += -1
     
-    lavastage += 0.01
-    if 1 <= lavastage < 2:
-        lava = pygame.image.load('blocks/lava1.png')
-    elif 2 <= lavastage < 3:
-        lava = pygame.image.load('blocks/lava2.png')
-    elif 3 <= lavastage < 4:
-        lava = pygame.image.load('blocks/lava3.png')
-        lavastage = 0.6
+
         
     
     for i in range(50):
@@ -917,11 +926,17 @@ while QUIT:
             tiley -= (50-i)
             realy += (5-i/10)
             break
-        
+        elif (mining[(round((realx - 16)/100) + (round((tiley - (50-i))/1000))*1000) + 5 - 3000]) in reducedGravityBlocks or (mining[(round((realx - 50)/100) + (round((tiley - (50-i))/1000))*1000) + 5 - 3000]) in reducedGravityBlocks or (mining[(round((realx - 72)/100) + (round((tiley - (50-i))/1000))*1000) + 5 - 3000]) in reducedGravityBlocks:
+            if (mining[(round((realx - 16)/100) + (round((tiley - (50-i))/1000))*1000) + 5 - 3000]) in transparantgravityblocks + reducedGravityBlocks and (mining[(round((realx - 50)/100) + (round((tiley - (50-i))/1000))*1000) + 5 - 3000]) in transparantgravityblocks + reducedGravityBlocks and (mining[(round((realx - 72)/100) + (round((tiley - (50-i))/1000))*1000) + 5 - 3000]) in transparantgravityblocks + reducedGravityBlocks:
+
+                tiley -= (25-i)
+                realy += (2.5-i/10)
+                break
     if climbingdown == True:
-        if (mining[(round((realx - 16)/100) + (round((tiley - (50))/1000))*1000) + 5 - 3000]) == "Ladder" and (mining[(round((realx - 50)/100) + (round((tiley - 50)/1000))*1000) + 5 - 3000]) == "Ladder" and (mining[(round((realx - 72)/100) + (round((tiley - 50)/1000))*1000) + 5 - 3000]) == "Ladder": 
-             tiley -= 50
-             realy += 5 
+        if (mining[(round((realx - 16)/100) + (round((tiley - (50))/1000))*1000) + 5 - 3000]) in climbingBlocks or (mining[(round((realx - 50)/100) + (round((tiley - 50)/1000))*1000) + 5 - 3000]) in climbingBlocks or (mining[(round((realx - 72)/100) + (round((tiley - 50)/1000))*1000) + 5 - 3000]) in climbingBlocks: 
+            if (mining[(round((realx - 16)/100) + (round((tiley - (50))/1000))*1000) + 5 - 3000]) in transparantblocks + climbingBlocks and (mining[(round((realx - 50)/100) + (round((tiley - 50)/1000))*1000) + 5 - 3000]) in transparantblocks + climbingBlocks and (mining[(round((realx - 72)/100) + (round((tiley - 50)/1000))*1000) + 5 - 3000]) in transparantblocks + climbingBlocks: 
+                tiley -= 50
+                realy += 5 
     gamedisplay.blit(character, (465, 196))
 
     for n in range(0, 9):
@@ -944,4 +959,6 @@ while QUIT:
     gamedisplay.blit(text, (500 - offset * 2, 470))
     
     pygame.display.update()
+
 pygame.quit()
+print("Game quit")
