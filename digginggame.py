@@ -42,11 +42,11 @@ middletilenr = 0
 realx = 50000
 realy = 50000
 tiley = -50000
-cameramovementx = ""
+cameramovementx = 0
 mousehower = 0
 startupp = True
 clickdistance = "Long"
-facing = "right"
+facing = "Right"
 idle = 1
 idlestage = 1
 miningstage = 0
@@ -648,9 +648,9 @@ while QUIT:
            QUIT = False
         elif event.type == pygame.KEYDOWN:
             if event.key == pygame.K_a:
-                cameramovementx = "a"
+                cameramovementx = 1
             elif event.key == pygame.K_d:
-                cameramovementx = "d"
+                cameramovementx = 2
             elif event.key == pygame.K_w:
                 Thread(target = jump).start()
             elif event.key == pygame.K_s:
@@ -684,9 +684,9 @@ while QUIT:
         
         elif event.type == pygame.KEYUP:
             if event.key == pygame.K_a:
-                cameramovementx = ""
+                cameramovementx = 0
             elif event.key == pygame.K_d:
-                cameramovementx = ""
+                cameramovementx = 0
                 
             elif event.key == pygame.K_s:
                 climbingdown = False
@@ -818,7 +818,7 @@ while QUIT:
             
                 
     
-    if cameramovementx == "a":
+    if cameramovementx == 1:
         if (mining[(round((realx - 74)/100) + (round((tiley + 100)/1000))*1000) + 5 - 3000]) in transparantblocks and (mining[(round((realx - 74)/100) + (round((tiley + 750)/1000))*1000) + 5 - 3000]) in transparantblocks and (mining[(round((realx - 74)/100) + (round((tiley + 1500)/1000))*1000) + 5 - 3000]) in transparantblocks:
             walkingstage += 0.06
             if walkingstage > 5:
@@ -826,10 +826,10 @@ while QUIT:
             character = pygame.image.load('character/walking' + str(round(walkingstage)) + '.png')
             character = pygame.transform.flip(character, True, False)
             realx -= 2
-            facing = "left"
+            facing = "Left"
             idle = 1
 
-    elif cameramovementx == "d":
+    elif cameramovementx == 2:
         if (mining[(round((realx - 14)/100) + (round((tiley + 100)/1000))*1000) + 5 - 3000]) in transparantblocks and (mining[(round((realx - 14)/100) + (round((tiley + 750)/1000))*1000) + 5 - 3000]) in transparantblocks and (mining[(round((realx - 14)/100) + (round((tiley + 1500)/1000))*1000) + 5 - 3000]) in transparantblocks:
             walkingstage += 0.06
             if walkingstage > 5:
@@ -837,7 +837,7 @@ while QUIT:
             
             character = pygame.image.load('character/walking' + str(round(walkingstage)) + '.png')
             realx += 2
-            facing = "right"
+            facing = "Right"
             idle = 1
     idle -= 0.1
     
@@ -847,7 +847,7 @@ while QUIT:
             idlestage = 0.6
         
         character = pygame.image.load('character/idle' + str(round(idlestage)) + '.png')
-        if facing == "left":
+        if facing == "Left":
             character = pygame.transform.flip(character, True, False)
             
             
