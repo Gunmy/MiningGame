@@ -1,54 +1,50 @@
-#import random
+#Imports
 import random
 from threading import Thread
 import time
 import pygame
 import math
 
-
 #Generates the map
 mining = []
-layer = 0
 for i in range(101):
-    for i in range(1000):
-        randomn = random.randint(1, 2000)
-        if 1 <= randomn <= 2:
+    for n in range(1000):
+        randomn = random.randint(1, 200)
+        if 1 <= randomn <= 5:
             mining.extend(["Energy_Crystal"]) #energy crystal
-        elif 3 <= randomn <= 13:
+        elif 6 <= randomn <= 20:
             mining.extend(["Iron_Ore"]) #iron
             
-        elif 14 <= randomn <= 18:
+        elif 21 <= randomn <= 30:
             mining.extend(["Gold_Ore"]) #gold
             
-        elif 19 <= randomn <= 29:
+        elif 31 <= randomn <= 40:
             mining.extend(["Copper_Ore"]) #copper
             
-        elif 30 <= randomn <= 32:
+        elif 41 <= randomn <= 45:
             mining.extend(["Diamond_Ore"]) #diamond
                 
-        elif 33 <= randomn <= 34:
+        elif 46 <= randomn <= 50:
             mining.extend(["Emerald_Ore"]) #emerald
-                
         else:
             mining.extend(["Stone_Block"])
-    layer += 1
-    if layer > 100:
-        for i in range(2000):
-            mining.insert(0, "Air") #lava
-        for i in range(3000):
-            mining.insert(0, "Lava") #lava
-        for i in range(1000):
-            mining.insert(0, "Obsidian") #obsidian
-        for i in range(10000):
-            mining.insert(0, "Stone_Block") #obsidian
+for i in range(2000):
+    mining.insert(0, "Air") #lava
+for i in range(3000):
+    mining.insert(0, "Lava") #lava
+for i in range(1000):
+    mining.insert(0, "Obsidian") #obsidian
+for i in range(10000):
+    mining.insert(0, "Stone_Block") #obsidian
         
+#Inits important variables
 middletilenr = 0
 realx = 50000
 realy = 50000
 tiley = -50000
 cameramovementx = ""
 mousehower = 0
-startupp = "Ja"
+startupp = True
 clickdistance = "Long"
 facing = "right"
 idle = 1
@@ -440,7 +436,7 @@ def startup():
     mining[middletilenr - 4 * 1000 + 4 + 1001] = "Air"
     mining[middletilenr - 4 * 1000 + 4 + 1000] = "Air"
     mining[middletilenr - 4 * 1000 + 4 + 999] = "Air"
-    startupp = ""
+    startupp = False
 
 jumpwait = False
 def jump():
@@ -878,7 +874,7 @@ while QUIT:
     items1[0] = lavas[math.floor(lavastage)]
 
     for i in range(10):
-        if startupp == "Ja":
+        if startupp:
             startup()
         xnumber = 10
         for i in range(12):
@@ -928,7 +924,6 @@ while QUIT:
             break
         elif (mining[(round((realx - 16)/100) + (round((tiley - (50-i))/1000))*1000) + 5 - 3000]) in reducedGravityBlocks or (mining[(round((realx - 50)/100) + (round((tiley - (50-i))/1000))*1000) + 5 - 3000]) in reducedGravityBlocks or (mining[(round((realx - 72)/100) + (round((tiley - (50-i))/1000))*1000) + 5 - 3000]) in reducedGravityBlocks:
             if (mining[(round((realx - 16)/100) + (round((tiley - (50-i))/1000))*1000) + 5 - 3000]) in transparantgravityblocks + reducedGravityBlocks and (mining[(round((realx - 50)/100) + (round((tiley - (50-i))/1000))*1000) + 5 - 3000]) in transparantgravityblocks + reducedGravityBlocks and (mining[(round((realx - 72)/100) + (round((tiley - (50-i))/1000))*1000) + 5 - 3000]) in transparantgravityblocks + reducedGravityBlocks:
-
                 tiley -= (25-i)
                 realy += (2.5-i/10)
                 break
